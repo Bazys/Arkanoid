@@ -25,7 +25,7 @@ signals:
     void pausePressed();
 public:
     Pad(int aX, int aY);
-    enum { Type = GameScene::PadItem };
+    enum { Type = GameScene::PaddleItem};
     int type() const { return Type; }
     void startKeyMove( int aDir );
     void moveWithKey();

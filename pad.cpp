@@ -62,13 +62,7 @@ Pad::Pad(int aX, int aY):QGraphicsRectItem( -Width/2, -Height/2, Width, Height),
     m_keyMoveTimer( -1 ), m_mouseX( UndefinedPos )
 {
     setPos( aX, aY);
-
-    QLinearGradient gradient( 0, rect().top(), 0, rect().bottom() );
-    gradient.setColorAt( 0, Color );
-    gradient.setColorAt( 0.5, Color.lighter( 300 ) );
-    gradient.setColorAt( 1, Color );
-    setBrush( gradient );
-
+    setBrush( Color );
     m_mouseMoveTimer = startTimer( 30 );
 }
 void Pad::startKeyMove( int aDir )

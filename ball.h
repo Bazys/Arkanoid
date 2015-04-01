@@ -14,8 +14,8 @@ class ball : public QGraphicsEllipseItem
     bool m_moving;
 public:
     ball(int aX, int aY);
-//    enum { Type = GameScene::BallItem };
-//    int type() const { return Type; }
+    enum { Type = GameScene::BallItem };
+    int type() const { return Type; }
     static const qreal Radius;
     static const qreal LinSpeed;
     QPointF speed() { return m_speed; } //Getter

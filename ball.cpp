@@ -9,17 +9,17 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsBlurEffect>
 
-const qreal ball::LinSpeed = 0.3; // pix/ms
+const qreal ball::LinSpeed = 0.3; // скорость перемещения мяча pix/ms
 const qreal ball::Radius = 9.5;
 
-static int sgn(qreal aVal)
+static int sgn(qreal aVal) // signed / unsigned
 {
     if( aVal < 0 )
         return -1;
     else
         return 1;
 }
-
+// статическая функция вычисления пересечния окружности
 static QPair<QPointF, QPointF> circleIntersection( QPointF aCenter, qreal aRadius, QLineF aLine )
 {
     aLine.translate( -1 * aCenter );
@@ -73,13 +73,13 @@ void ball::updatePos( qreal aTime )     // Passed time in ms
         setPos( pos() + aTime * m_speed );
 }
 
-bool ball::bounceWalls(qreal &aTime, QPointF &aImpact)
+bool ball::bounceWalls(qreal &aTime, QPointF &aImpact)//преверка на удар об стены
 {
     QPolygonF wallCorners( scene()->sceneRect() );
     QPolygonF ballCorners( mapToScene(rect()) );
-    QLineF reverseSpeedLine( QPointF(0, 0), -1 * m_speed );  // Bounces at the opposite direction
+    QLineF reverseSpeedLine( QPointF(0, 0), -1 * m_speed );  // меняем направление после удара
 
-    for( int i=0; i<3; i++)
+     for( int i=0; i<3; i++)
         {
         QLineF wall( wallCorners.at((i+3)%4), wallCorners.at((i+4)%4) );
         QLineF wallNormalLine = wall;
@@ -87,9 +87,9 @@ bool ball::bounceWalls(qreal &aTime, QPointF &aImpact)
         qreal incidenceAngle = reverseSpeedLine.angleTo( wallNormalLine );
         if( incidenceAngle > 180 )
             incidenceAngle -= 360;
-        if( qAbs( incidenceAngle ) >= 90 )   // The direction is incorrect
+        if( qAbs( incidenceAngle ) >= 90 )   // неверное направление
             continue;
-        QPointF ballTouchPoint = ballCorners[i];    // One of the ball corners
+        QPointF ballTouchPoint = ballCorners[i];
         QLineF ballTrack = QLineF( ballTouchPoint - aTime*m_speed, ballTouchPoint );
         QPointF impactPoint;
         if( ballTrack.intersect(wall, &impactPoint) == QLineF::BoundedIntersection )
@@ -107,12 +107,12 @@ bool ball::bounceWalls(qreal &aTime, QPointF &aImpact)
             return true;
             }
         }
-    if( y() > scene()->sceneRect().bottom() )
+    if( y() > scene()->sceneRect().bottom() ) //если достигли нижней стены - остановка игры
         stop();
     return false;
 }
 
-bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint)
+bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint) // удар об предметы кирпичи или доску
 {
     QList<QGraphicsItem*> items = scene()->items( mapToScene( shape() ) );
     QList<QGraphicsRectItem*> hitItems;
@@ -170,7 +170,7 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint)
         for( int i=0; i<4; i++ )
             {
             // For paddle: it's enough to check only TL and TR corners
-            if( hitItem->type() == GameScene::PadItem && i > 1 )
+            if( hitItem->type() == GameScene::PaddleItem && i > 1 )
                 break;
             QPointF itemCorner = itemCorners.at(i);
             QLineF centerToCorner( pos(), itemCorner );
@@ -218,7 +218,7 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint)
         return false;
 
     // Change speed vector after impact
-    if( nearestItem->type() == GameScene::PadItem && nearestEdge == 0 )  // Top edge of the paddle
+    if( nearestItem->type() == GameScene::PaddleItem && nearestEdge == 0 )  // Top edge of the paddle
         {
         // The reflection angle depends on the impact point at the paddle
         qreal paddleWidth = nearestItem->rect().width();

@@ -3,39 +3,40 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <math.h>
-#include "ball.h"
-#include "pad.h"
 
 class ball;
 class Pad;
-
+//Класс игровой сцены. На нём рисуются все элементы
 class GameScene : public QGraphicsScene
 {
     Q_OBJECT
-    void setupBall();
-    void setupPad();
-    void moveBall();
-    int m_timer;
-    bool m_paused;
-    ball* mBall;
-    Pad* mPad;
+    // группа методов вызываемых из публичного метода setup
+    void setupBall();//устанавливаем мяч
+    void setupPad();//устанавливаем доску для отбивания
+    void moveBall();//перемещение мяча
+
+    int m_timer;//когда игра запущена
+    bool m_paused;//игра на паузе
+    ball* mBall; // переменная типа мяч
+    Pad* mPad; //переменная типа доска
 private slots:
-    void togglePause();
+    void togglePause(); //событие нажатия на пробел - пауза в игре
 protected:
-    void timerEvent(QTimerEvent* event);
+    void timerEvent(QTimerEvent* event); //таймер для событий
 public:
-    typedef enum
+    // перечислимый тип для получения информации обо что ударился мяч
+    enum
         {
         BrickItem = QGraphicsItem::UserType + 1,
         BallItem,
-        PadItem,
+        PaddleItem,
         ParticleItem
         } ItemTypes;
-    GameScene();
-    void setup();
+    GameScene();//конструктор класса
+    void setup();//публичный метод настройки мяча, доски и кирпичей
     static const int Width = 800;
     static const int Height = 600;
-    static const int GameTick = 1000 / 35 ;    // ms
+    static const int GameTick = 1000 / 35 ;    // константа таймера (через какое время перерисовывать) ms
 
 };
 
