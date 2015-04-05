@@ -1,6 +1,7 @@
 #include "gamescene.h"
 #include "ball.h"
 #include "pad.h"
+#include "brick.h"
 #include <QTime>
 #include <QColor>
 #include <QtDebug>
@@ -34,9 +35,36 @@ void GameScene::setupPad()
         connect( mPad, SIGNAL(pausePressed()), SLOT(togglePause()) );// нажатие пробела
 }
 
+void GameScene::setupBricks()
+{
+QStringList colors = QColor::colorNames();
+
+int y = BrickRegionTop;
+while( y < BrickRegionBottom )
+    {
+    int x = -Width/2 + brick::Width/2;
+    QColor color;
+    do
+        color = QColor( colors.at(qrand()%colors.size()) );
+    while( color.lightness() > 180 || color.lightness() == 0 );
+    while( x < Width/2 )
+        {
+        if( qrand()%2 == 0)
+            {
+            brick* mBrick = new brick( x, y, color );
+            m_bricks << mBrick;
+            addItem( mBrick );
+            }
+        x += brick::Width;
+        }
+    y += brick::Height;
+    }
+}
+
 void GameScene::setup()
 {
     setupBall();
+    setupBricks();
     setupPad();
     m_timer = startTimer( GameTick );
 }

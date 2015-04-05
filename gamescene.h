@@ -6,6 +6,7 @@
 
 class ball;
 class Pad;
+class brick;
 //Класс игровой сцены. На нём рисуются все элементы
 class GameScene : public QGraphicsScene
 {
@@ -13,12 +14,14 @@ class GameScene : public QGraphicsScene
     // группа методов вызываемых из публичного метода setup
     void setupBall();//устанавливаем мяч
     void setupPad();//устанавливаем доску для отбивания
+    void setupBricks();
     void moveBall();//перемещение мяча
 
     int m_timer;//когда игра запущена
     bool m_paused;//игра на паузе
     ball* mBall; // переменная типа мяч
     Pad* mPad; //переменная типа доска
+    QList<brick*> m_bricks;
 private slots:
     void togglePause(); //событие нажатия на пробел - пауза в игре
 protected:
@@ -36,6 +39,8 @@ public:
     void setup();//публичный метод настройки мяча, доски и кирпичей
     static const int Width = 800;
     static const int Height = 600;
+    static const int BrickRegionTop = -Height/2 + 100;
+    static const int BrickRegionBottom = BrickRegionTop + 150;
     static const int GameTick = 1000 / 35 ;    // константа таймера (через какое время перерисовывать) ms
 
 };

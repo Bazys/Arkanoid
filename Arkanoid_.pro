@@ -16,10 +16,12 @@ SOURCES += main.cpp \
     gamescene.cpp \
     gameview.cpp \
     ball.cpp \
-    pad.cpp
+    pad.cpp \
+    brick.cpp
 
 HEADERS  += \
     gamescene.h \
     gameview.h \
     ball.h \
-    pad.h
+    pad.h \
+    brick.h
