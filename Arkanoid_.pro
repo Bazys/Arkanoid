@@ -25,3 +25,6 @@ HEADERS  += \
     ball.h \
     pad.h \
     brick.h
+
+RESOURCES += \
+    ball.qrc
