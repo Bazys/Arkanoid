@@ -1,7 +1,9 @@
 #include "gamescene.h"
 #include "ball.h"
+#define _USE_MATH_DEFINES
 #include "pad.h"
 #include "brick.h"
+#include <math.h>
 #include <QTime>
 #include <QColor>
 #include <QtDebug>
@@ -22,7 +24,7 @@ GameScene::GameScene(): m_paused(false) //играем сразу
 void GameScene::setupBall()
 {
     mBall = new ball(0, height()/12); // новый экземпляр класса мяча
-    mBall->start( 6*M_PI/4 - qrand() * M_PI/2 / RAND_MAX ); //при старте рандомно движемся в разные стороны
+    mBall->start( 6 * M_PI / 4 - qrand() * M_PI/2 / RAND_MAX ); //при старте рандомно движемся в разные стороны
     addItem( mBall );// добавляем мяч на сцену
 }
 
