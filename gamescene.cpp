@@ -45,13 +45,15 @@ int y = BrickRegionTop;
 while( y < BrickRegionBottom )
     {
     int x = -Width/2 + brick::Width/2;
+    // рисуем разными цветами
     QColor color;
     do
         color = QColor( colors.at(qrand()%colors.size()) );
     while( color.lightness() > 180 || color.lightness() == 0 );
     while( x < Width/2 )
         {
-        if( qrand()%2 == 0)
+        // рандомно рисуем или не рисуем кирпичи
+//        if( qrand()%2 == 0)
             {
             brick* mBrick = new brick( x, y, color );
             m_bricks << mBrick;

@@ -40,7 +40,7 @@ public:
     static const int Width = 800;
     static const int Height = 600;
     static const int BrickRegionTop = -Height/2 + 100;
-    static const int BrickRegionBottom = BrickRegionTop + 150;
+    static const int BrickRegionBottom = BrickRegionTop + 50;
     static const int GameTick = 1000 / 35 ;    // константа таймера (через какое время перерисовывать) ms
 
 };

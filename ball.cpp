@@ -52,12 +52,14 @@ static QPair<QPointF, QPointF> circleIntersection( QPointF aCenter, qreal aRadiu
 }
 
 ball::ball(int aX, int aY)
-    :QGraphicsEllipseItem( -Radius, -Radius, 2*Radius, 2*Radius ), m_color(Qt::blue), m_moving(false)
+    :QGraphicsEllipseItem( -Radius, -Radius, 2*Radius, 2*Radius ), m_color(Qt::gray), m_moving(false)
 {
     setPos( aX, aY);
     setFlag( ItemSendsGeometryChanges );
-    setPen( QPen(Qt::black) );
-    setBrush( Qt::black );
+    QRadialGradient gradient( QPointF(0, 0), Radius, QPointF( Radius/2, -Radius/2) );
+    gradient.setColorAt( 0, Qt::white );
+    gradient.setColorAt( 1, m_color );
+    setBrush( gradient );
 
 }
 void ball::start(qreal aAngle )

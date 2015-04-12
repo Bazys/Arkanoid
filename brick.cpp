@@ -5,7 +5,11 @@ brick::brick(int aX, int aY, QColor aColor):
 {
     setPos( aX, aY);
     setPen( QPen(Qt::black) );
-    setBrush( aColor );
+    QLinearGradient gradient( -Height/3, rect().top(), Height/3, rect().bottom() );
+    gradient.setColorAt( 0, m_color );
+    gradient.setColorAt( 0.5, m_color.light() );
+    gradient.setColorAt( 1, m_color );
+    setBrush( gradient );
 }
 
 void brick::destroy()
