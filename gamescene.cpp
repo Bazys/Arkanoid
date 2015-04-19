@@ -44,7 +44,7 @@ QStringList colors = QColor::colorNames();
 int y = BrickRegionTop;
 while( y < BrickRegionBottom )
     {
-    int x = -Width/2 + brick::Width/2;
+    int x = -Width/2 + Brick::Width/2;
     // рисуем разными цветами
     QColor color;
     do
@@ -55,13 +55,13 @@ while( y < BrickRegionBottom )
         // рандомно рисуем или не рисуем кирпичи
 //        if( qrand()%2 == 0)
             {
-            brick* mBrick = new brick( x, y, color );
+            Brick* mBrick = new Brick( x, y, color );
             m_bricks << mBrick;
             addItem( mBrick );
             }
-        x += brick::Width;
+        x += Brick::Width;
         }
-    y += brick::Height;
+    y += Brick::Height;
     }
 }
 
@@ -83,13 +83,20 @@ void GameScene::moveBall() //двигаем мячик
         {
         rebound = false;
         QPointF impact;
+        Brick* hitBrick;
 //        QPointF oldSpeed = mBall->speed();
-//        qreal oldTime = time;
-        if( mBall->bounceItems( time, impact) )
+        qreal oldTime = time;
+        if( mBall->bounceItems( time, impact, hitBrick) )
             {
             rebound = true;
-//            if( time == oldTime )
-//                mBall->stop();  // Protection against balls of exactly same size as the brick height
+            QRectF brickRect;
+            if( hitBrick )
+                {
+                brickRect = hitBrick->sceneBoundingRect();
+                hitBrick->destroy();
+                }
+            if( time == oldTime )
+                mBall->stop();  // Protection against balls of exactly same size as the brick height
             }
         if( mBall->bounceWalls( time, impact ) )
             {

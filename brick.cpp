@@ -1,6 +1,6 @@
 #include "brick.h"
 
-brick::brick(int aX, int aY, QColor aColor):
+Brick::Brick(int aX, int aY, QColor aColor):
     QGraphicsRectItem( -Width/2, -Height/2, Width, Height), m_color(aColor), m_destroyed(false)
 {
     setPos( aX, aY);
@@ -12,7 +12,7 @@ brick::brick(int aX, int aY, QColor aColor):
     setBrush( gradient );
 }
 
-void brick::destroy()
+void Brick::destroy()
 {
     m_destroyed = true;
     hide();

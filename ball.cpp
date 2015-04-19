@@ -1,5 +1,7 @@
 #include "ball.h"
+#include "brick.h"
 #include "gamescene.h"
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <qmath.h>
 #include <QPainter>
@@ -114,7 +116,7 @@ bool ball::bounceWalls(qreal &aTime, QPointF &aImpact)//преверка на у
     return false;
 }
 
-bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint) // удар об предметы кирпичи или доску
+bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint, Brick*& aHitBrick) // удар об предметы кирпичи или доску
 {
     QList<QGraphicsItem*> items = scene()->items( mapToScene( shape() ) );
     QList<QGraphicsRectItem*> hitItems;
@@ -148,7 +150,7 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint) // удар об п�
             qreal incidenceAngle = reverseSpeedLine.angleTo( itemNormalLine );
             if( incidenceAngle > 180 )
                 incidenceAngle -= 360;
-            if( qAbs( incidenceAngle ) >= 90 )   // The direction is incorrect
+            if( qAbs( incidenceAngle ) >= 90 )   // Упс... направление не верное
                 continue;
             QPointF ballTouchPoint = QLineF( ballCorners[(i+2)%4], ballCorners[(i+3)%4] ).pointAt(0.5);   // center of the rect edge
             QLineF ballTrack( ballTouchPoint - aTime * m_speed, ballTouchPoint );
@@ -171,7 +173,7 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint) // удар об п�
         // Check corners of the item
         for( int i=0; i<4; i++ )
             {
-            // For paddle: it's enough to check only TL and TR corners
+            // Для ракетки достаточно проверить только верхний левый и верхний правый углы
             if( hitItem->type() == GameScene::PaddleItem && i > 1 )
                 break;
             QPointF itemCorner = itemCorners.at(i);
@@ -216,23 +218,22 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint) // удар об п�
                 }
             }
         }
-    if( nearestDistToImpact == inf )   // Impact points were not found
+    if( nearestDistToImpact == inf )   // Упс... удар в никуда
         return false;
 
-    // Change speed vector after impact
-    if( nearestItem->type() == GameScene::PaddleItem && nearestEdge == 0 )  // Top edge of the paddle
+    // изменить вектор скорости после удара
+    if( nearestItem->type() == GameScene::PaddleItem && nearestEdge == 0 )
         {
         // The reflection angle depends on the impact point at the paddle
         qreal paddleWidth = nearestItem->rect().width();
         qreal relImpactPos = ( paddleWidth/2 + nearestItem->mapFromScene(nearestImpactPoint).x() ) / paddleWidth;
-        qreal Pi = 3.14159265;
-        qreal angle = relImpactPos * Pi/2 + Pi/4;
+        qreal angle = relImpactPos * M_PI/2 + M_PI/4;
         m_speed.setX( -LinSpeed * cos(angle) );
         m_speed.setY( -LinSpeed * sin(angle) );
         }
     else
         {
-        // The reflection angle is equal to the incidence angle
+        // Угол падения равен углу отражения
         reverseSpeedLine.setAngle( reverseSpeedLine.angle() + 2*nearestIncidenceAngle );
         m_speed = reverseSpeedLine.p2();
         }
@@ -240,10 +241,9 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint) // удар об п�
     // Set the ball to the impact position
     QPointF ballImpactPos = nearestImpactPoint - mapFromScene( nearestBallPoint );
     setPos( ballImpactPos );
-
-//    addTrackPoint( ballImpactPos );
     aTime -= LinSpeed / nearestDistToImpact;
     aImpactPoint = nearestImpactPoint;
+    aHitBrick = qgraphicsitem_cast<Brick*>( nearestItem );
     return true;
 
 }

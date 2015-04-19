@@ -6,7 +6,7 @@
 
 class ball;
 class Pad;
-class brick;
+class Brick;
 //Класс игровой сцены. На нём рисуются все элементы
 class GameScene : public QGraphicsScene
 {
@@ -21,7 +21,7 @@ class GameScene : public QGraphicsScene
     bool m_paused;//игра на паузе
     ball* mBall; // переменная типа мяч
     Pad* mPad; //переменная типа доска
-    QList<brick*> m_bricks;
+    QList<Brick*> m_bricks;
 private slots:
     void togglePause(); //событие нажатия на пробел - пауза в игре
 protected:

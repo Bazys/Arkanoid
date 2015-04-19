@@ -24,7 +24,7 @@ public:
     void start(qreal aAngle);
     void updatePos(qreal aTime);
     bool bounceWalls( qreal& aTime, QPointF& aImpact );
-    bool bounceItems( qreal& aTime, QPointF& aImpactPoint);
+    bool bounceItems( qreal& aTime, QPointF& aImpactPoint, Brick*& aHitBrick);
 };
 
 #endif // BALL_H
