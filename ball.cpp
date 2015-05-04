@@ -121,15 +121,15 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint, Brick*& aHitBrick) /
     QList<QGraphicsItem*> items = scene()->items( mapToScene( shape() ) );
     QList<QGraphicsRectItem*> hitItems;
     foreach( QGraphicsItem* item, items )
-        {
-        QGraphicsRectItem* rectItem = dynamic_cast<QGraphicsRectItem*>( item );
-        if( rectItem )
-            hitItems << rectItem;
-        }
+    {
+    QGraphicsRectItem* rectItem = dynamic_cast<QGraphicsRectItem*>( item );
+    if( rectItem )
+        hitItems << rectItem;
+    }
     if( hitItems.isEmpty() )
         return false;
     QPolygonF ballCorners( mapToScene( rect() ) );
-    QLineF reverseSpeedLine( QPointF(0, 0), -m_speed );  // Bounces at the opposite direction
+    QLineF reverseSpeedLine( QPointF(0, 0), -m_speed );  // направление удара - противоположенное
     const qreal inf = 10000;
 
     qreal nearestDistToImpact = inf;
@@ -142,8 +142,8 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint, Brick*& aHitBrick) /
     foreach( QGraphicsRectItem* hitItem, hitItems )
         {
         QPolygonF itemCorners( hitItem->sceneBoundingRect() );
-        // Check item edges
-        for( int i=0; i<4; i++ )    // for each item edge and opposite ball touch point
+        // Проверка границ предмета
+        for( int i=0; i<4; i++ )    // для каждой границы предмета и точки касания мяча
             {
             QLineF itemEdge( itemCorners.at(i), itemCorners.at((i+1)%4) ); // 0=T, 1=R, 2=B, 3=L
             QLineF itemNormalLine = itemEdge.normalVector();
@@ -152,7 +152,7 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint, Brick*& aHitBrick) /
                 incidenceAngle -= 360;
             if( qAbs( incidenceAngle ) >= 90 )   // Упс... направление не верное
                 continue;
-            QPointF ballTouchPoint = QLineF( ballCorners[(i+2)%4], ballCorners[(i+3)%4] ).pointAt(0.5);   // center of the rect edge
+            QPointF ballTouchPoint = QLineF( ballCorners[(i+2)%4], ballCorners[(i+3)%4] ).pointAt(0.5);   // центр границ прямоугольника
             QLineF ballTrack( ballTouchPoint - aTime * m_speed, ballTouchPoint );
             QPointF impactPoint;
             if( itemEdge.intersect(ballTrack, &impactPoint) == QLineF::BoundedIntersection )
@@ -170,7 +170,7 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint, Brick*& aHitBrick) /
                     }
                 }
             }
-        // Check corners of the item
+        // Проверка уголов предметов (кирпичи/мяч/доска)
         for( int i=0; i<4; i++ )
             {
             // Для ракетки достаточно проверить только верхний левый и верхний правый углы
@@ -178,19 +178,19 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint, Brick*& aHitBrick) /
                 break;
             QPointF itemCorner = itemCorners.at(i);
             QLineF centerToCorner( pos(), itemCorner );
-            if( centerToCorner.length() > Radius ) // ball doesn't contain the item corner
+            if( centerToCorner.length() > Radius ) // у мяча нет углов
                 continue;
-            QLineF itemEdge( itemCorners.at(i), itemCorners.at((i+1)%4) ); // 0=T, 1=R, 2=B, 3=L
+            QLineF itemEdge( itemCorners.at(i), itemCorners.at((i+1)%4) ); // 0=Top, 1=Right, 2=Bottom, 3=Left
             QLineF itemNormalLine = itemEdge;
             itemNormalLine.setAngle( itemNormalLine.angle() + 135 );
             qreal incidenceAngle = reverseSpeedLine.angleTo( itemNormalLine );
             if( incidenceAngle > 180 )
                 incidenceAngle -= 360;
-            if( qAbs( incidenceAngle ) >= 90 )   // The direction is incorrect
+            if( qAbs( incidenceAngle ) >= 90 )   // Направление неверное
                 continue;
-            QLineF ballTrack( itemCorner - aTime * m_speed, itemCorner ); // From old ball pos to item corner
+            QLineF ballTrack( itemCorner - aTime * m_speed, itemCorner ); // С предыдущей позиции мяча  в угол
             QPair<QPointF, QPointF> intPoints = circleIntersection( pos() - aTime * m_speed, Radius, ballTrack );
-            if( intPoints.first.isNull() || intPoints.second.isNull() )  // Only one intersection point
+            if( intPoints.first.isNull() || intPoints.second.isNull() )  // только точка пересечения
                 continue;
             qreal distToImpact = inf;
             QPointF ballImpactPoint;
@@ -214,7 +214,7 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint, Brick*& aHitBrick) /
                 nearestIncidenceAngle = incidenceAngle;
                 nearestBallPoint = ballImpactPoint;
                 nearestItem = hitItem;
-                nearestEdge = -1;   // No edge
+                nearestEdge = -1;   // Нет границ
                 }
             }
         }
@@ -224,7 +224,7 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint, Brick*& aHitBrick) /
     // изменить вектор скорости после удара
     if( nearestItem->type() == GameScene::PaddleItem && nearestEdge == 0 )
         {
-        // The reflection angle depends on the impact point at the paddle
+        // Угол отражения зависит от точки удара об ракетку
         qreal paddleWidth = nearestItem->rect().width();
         qreal relImpactPos = ( paddleWidth/2 + nearestItem->mapFromScene(nearestImpactPoint).x() ) / paddleWidth;
         qreal angle = relImpactPos * M_PI/2 + M_PI/4;
@@ -238,7 +238,7 @@ bool ball::bounceItems(qreal &aTime, QPointF &aImpactPoint, Brick*& aHitBrick) /
         m_speed = reverseSpeedLine.p2();
         }
 
-    // Set the ball to the impact position
+    // Установить мяч в позицию удара
     QPointF ballImpactPos = nearestImpactPoint - mapFromScene( nearestBallPoint );
     setPos( ballImpactPos );
     aTime -= LinSpeed / nearestDistToImpact;
