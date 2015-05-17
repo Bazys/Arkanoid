@@ -2,6 +2,7 @@
 #define GAMESCENE_H
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QGraphicsSimpleTextItem>
 #include <math.h>
 
 class ball;
@@ -14,7 +15,7 @@ class GameScene : public QGraphicsScene
     // группа методов вызываемых из публичного метода setup
     void setupBall();//устанавливаем мяч
     void setupPad();//устанавливаем доску для отбивания
-    void setupBricks();
+    void setupBricks();// устанавливаем кирпичи
     void moveBall();//перемещение мяча
 
     int m_timer;//когда игра запущена
@@ -22,6 +23,7 @@ class GameScene : public QGraphicsScene
     ball* mBall; // переменная типа мяч
     Pad* mPad; //переменная типа доска
     QList<Brick*> m_bricks;
+    QGraphicsSimpleTextItem* label;
 private slots:
     void togglePause(); //событие нажатия на пробел - пауза в игре
 protected:

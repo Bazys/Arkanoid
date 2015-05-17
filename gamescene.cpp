@@ -18,13 +18,18 @@ GameScene::GameScene(): m_paused(false) //играем сразу
     pen.setWidthF( borderWidth );//рисуем рамки
     QRectF borderRect = sceneRect().adjusted( -borderWidth/2, -borderWidth/2, borderWidth/2, borderWidth/2);//по границе вокруг сцены
     addRect( borderRect, pen, Qt::white );
+    label = new QGraphicsSimpleTextItem( "0" );
+    label->setBrush( Qt::black );
+    label->setFont( QFont("Arial", 15, QFont::Bold) );
+    label->setPos( (-Width/2)+20, (-Height/2)+10 );
+    addItem(label);
     setItemIndexMethod(QGraphicsScene::NoIndex);
 }
 
 void GameScene::setupBall()
 {
     mBall = new ball(0, height()/12); // новый экземпляр класса мяча
-    mBall->start( 6 * M_PI / 4 - qrand() * M_PI/2 / RAND_MAX ); //при старте рандомно движемся в разные стороны
+    mBall->start( 6 * M_PI / 2 - qrand() * M_PI/2 / RAND_MAX ); //при старте рандомно движемся в разные стороны
     addItem( mBall );// добавляем мяч на сцену
 }
 
@@ -76,6 +81,8 @@ void GameScene::setup()
 void GameScene::moveBall() //двигаем мячик
 {
     mBall->updatePos( GameTick );
+    QString tries = QString::number(mBall->getTries());
+    label->setText(tries);
     qreal time = GameTick;
     bool rebound = true;
     int rebounds = 0;

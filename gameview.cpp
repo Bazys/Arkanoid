@@ -15,5 +15,5 @@ void GameView::resizeEvent( QResizeEvent* )
 
 void GameView::closeEvent( QCloseEvent* )
 {
-//    GameController::instance()->cleanup();
+//    GameScene::instance()->cleanup();
 }

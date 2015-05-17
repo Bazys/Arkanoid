@@ -1,17 +1,16 @@
 #ifndef BALL_H
 #define BALL_H
-
 #include "gamescene.h"
 #include <QPair>
 #include <QPainterPath>
 #include <QGraphicsEllipseItem>
-
 
 class ball : public QGraphicsEllipseItem
 {
     QColor m_color;
     QPointF m_speed;    // Vector
     bool m_moving;
+    int m_try;
 public:
     ball(int aX, int aY);
     enum { Type = GameScene::BallItem };
@@ -23,6 +22,7 @@ public:
     void resume() { m_moving = true; }
     void start(qreal aAngle);
     void updatePos(qreal aTime);
+    int getTries() { return m_try; }
     bool bounceWalls( qreal& aTime, QPointF& aImpact );
     bool bounceItems( qreal& aTime, QPointF& aImpactPoint, Brick*& aHitBrick);
 };
