@@ -10,15 +10,21 @@
 #include <QPainter>
 #include <QGraphicsView>
 
-GameScene::GameScene(): m_paused(false) //играем сразу
+GameScene::GameScene(): m_paused(true), m_tries(3), m_score(0) //не играем сразу, три попытки, 0 очков
 {
     setSceneRect( -Width/2, -Height/2, Width, Height );
     const qreal borderWidth = 10;
     QPen pen(Qt::black);//черным цветом
     pen.setWidthF( borderWidth );//рисуем рамки
     QRectF borderRect = sceneRect().adjusted( -borderWidth/2, -borderWidth/2, borderWidth/2, borderWidth/2);//по границе вокруг сцены
-    addRect( borderRect, pen, Qt::white );
-    label = new QGraphicsSimpleTextItem( "0" );
+    QBrush brush(QPixmap(":/res/arkanoid.png"));
+    addRect( borderRect, pen, brush );
+    scores = new QGraphicsSimpleTextItem( "0" );
+    scores->setBrush( Qt::black );
+    scores->setFont( QFont("Arial", 15, QFont::Bold) );
+    scores->setPos( (Width/2)-20, (-Height/2)+10 );
+    addItem(scores);
+    label = new QGraphicsSimpleTextItem( QString::number(m_tries) );
     label->setBrush( Qt::black );
     label->setFont( QFont("Arial", 15, QFont::Bold) );
     label->setPos( (-Width/2)+20, (-Height/2)+10 );
@@ -28,14 +34,15 @@ GameScene::GameScene(): m_paused(false) //играем сразу
 
 void GameScene::setupBall()
 {
-    mBall = new ball(0, height()/12); // новый экземпляр класса мяча
-    mBall->start( 6 * M_PI / 2 - qrand() * M_PI/2 / RAND_MAX ); //при старте рандомно движемся в разные стороны
+    mBall = new ball(0, height()/2-70, m_tries); // новый экземпляр класса мяча
+    mBall->start( 6 * M_PI / 2 - qrand() * M_PI/2 / RAND_MAX, 1 ); //при старте рандомно движемся в разные стороны
+    mBall->stop();
     addItem( mBall );// добавляем мяч на сцену
 }
 
 void GameScene::setupPad()
 {
-        mPad = new Pad( -Pad::Width/2, Height/2 - 50 );// новый экземпляр класс доска
+        mPad = new Pad( (-Pad::Width/2), Height/2 - 50 );// новый экземпляр класс доска
         addItem( mPad ); //добавляем на сцену
         mPad->grabMouse(); // перехватываем события мыши
         mPad->grabKeyboard(); //перехватываем события клавиатуры
@@ -58,7 +65,7 @@ while( y < BrickRegionBottom )
     while( x < Width/2 )
         {
         // рандомно рисуем или не рисуем кирпичи
-//        if( qrand()%2 == 0)
+        if( qrand()%2 == 0)
             {
             Brick* mBrick = new Brick( x, y, color );
             m_bricks << mBrick;
@@ -67,22 +74,45 @@ while( y < BrickRegionBottom )
         x += Brick::Width;
         }
     y += Brick::Height;
+}
+}
+
+void GameScene::setupHearts(int tries)
+{
+    foreach(QGraphicsSvgItem* heart, hearts){
+        removeItem(heart);
+    }
+    hearts.clear();
+    for (int i=0;i<tries;i++){
+        QGraphicsSvgItem* mHearts = new QGraphicsSvgItem(":/res/heart.svg");
+        mHearts->setFlags(QGraphicsItem::ItemClipsToShape);
+        mHearts->setCacheMode(QGraphicsItem::NoCache);
+        mHearts->setZValue(0);
+        mHearts->setPos((-Width/2)+40+(i*30),(-Height/2)+10);
+        hearts << mHearts;
+        addItem(mHearts);
     }
 }
+
 
 void GameScene::setup()
 {
     setupBall();
     setupBricks();
     setupPad();
+    setupHearts(3);
     m_timer = startTimer( GameTick );
 }
 
 void GameScene::moveBall() //двигаем мячик
 {
     mBall->updatePos( GameTick );
-    QString tries = QString::number(mBall->getTries());
-    label->setText(tries);
+    if (m_tries != mBall->getTries()){ //только если изменилось кол-во попыток
+        m_tries = mBall->getTries();
+        QString tries = QString::number(m_tries);
+        label->setText(tries);
+        setupHearts(m_tries);
+    }
     qreal time = GameTick;
     bool rebound = true;
     int rebounds = 0;
@@ -99,8 +129,16 @@ void GameScene::moveBall() //двигаем мячик
             QRectF brickRect;
             if( hitBrick )
                 {
-                brickRect = hitBrick->sceneBoundingRect();
-                hitBrick->destroy();
+                    m_score++;
+                    if (m_score == m_bricks.length()-1){ //сбили все кирпичи
+                        m_paused = true; //останавливаем игру
+                        mBall->stop();
+
+                    }
+                    brickRect = hitBrick->sceneBoundingRect();
+                    hitBrick->destroy();
+                    QString score = QString::number(m_score);
+                    scores->setText(score);
                 }
             if( time == oldTime )
                 mBall->stop();  // Protection against balls of exactly same size as the brick height

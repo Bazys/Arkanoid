@@ -5,7 +5,6 @@ GameView::GameView(QGraphicsScene* scene, QWidget* parent) :
     QGraphicsView(scene, parent)
 {
     setAttribute( Qt::WA_DeleteOnClose );
-
 }
 
 void GameView::resizeEvent( QResizeEvent* )

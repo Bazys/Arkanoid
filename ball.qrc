@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>res/ball_static.png</file>
+        <file>res/arkanoid.png</file>
+        <file>res/heart.svg</file>
     </qresource>
 </RCC>

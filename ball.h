@@ -12,7 +12,7 @@ class ball : public QGraphicsEllipseItem
     bool m_moving;
     int m_try;
 public:
-    ball(int aX, int aY);
+    ball(int aX, int aY, int tries);
     enum { Type = GameScene::BallItem };
     int type() const { return Type; }
     static const qreal Radius;
@@ -20,7 +20,7 @@ public:
     QPointF speed() { return m_speed; } //Getter
     void stop() { m_moving = false; }
     void resume() { m_moving = true; }
-    void start(qreal aAngle);
+    void start(qreal aAngle, int level);
     void updatePos(qreal aTime);
     int getTries() { return m_try; }
     bool bounceWalls( qreal& aTime, QPointF& aImpact );

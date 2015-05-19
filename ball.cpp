@@ -53,10 +53,10 @@ static QPair<QPointF, QPointF> circleIntersection( QPointF aCenter, qreal aRadiu
         }
 }
 
-ball::ball(int aX, int aY)
+ball::ball(int aX, int aY,int tries = 3)
     :QGraphicsEllipseItem( -Radius, -Radius, 2*Radius, 2*Radius ), m_color(Qt::gray), m_moving(false)
 {
-    m_try = 3;
+    m_try = tries;
     setPos( aX, aY);
     setFlag( ItemSendsGeometryChanges );
     QRadialGradient gradient( QPointF(0, 0), Radius, QPointF( Radius/2, -Radius/2) );
@@ -64,10 +64,10 @@ ball::ball(int aX, int aY)
     gradient.setColorAt( 1, m_color );
     setBrush( gradient );
 }
-void ball::start(qreal aAngle )
+void ball::start(qreal aAngle, int level = 1 )
 {
-    m_speed.setX( LinSpeed * cos(aAngle) );
-    m_speed.setY( LinSpeed * sin(aAngle) );
+    m_speed.setX( LinSpeed * level * cos(aAngle) );
+    m_speed.setY( LinSpeed * level * sin(aAngle) );
     m_moving = true;
 }
 
@@ -115,8 +115,9 @@ bool ball::bounceWalls(qreal &aTime, QPointF &aImpact)//преверка на у
         if (m_moving){
             m_try--;
             if (m_try>0) {
-                setPos(0, GameScene::Height/20);
-                start(6 * M_PI / 2 - qrand() * M_PI/2 / RAND_MAX);
+                setPos(0, GameScene::Height/2-65);
+                m_moving = false;
+//                start(6 * M_PI / 2 - qrand() * M_PI/2 / RAND_MAX);
             }
             else{
              stop();
