@@ -17,9 +17,9 @@ class Pad : public QObject, public QGraphicsRectItem
     int m_mouseMoveTimer;
     qreal m_mouseX;
 protected:
-    void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
-    void keyPressEvent(QKeyEvent* event );
-    void keyReleaseEvent(QKeyEvent* event );
+//    void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
+//    void keyPressEvent(QKeyEvent* event );
+//    void keyReleaseEvent(QKeyEvent* event );
     void timerEvent( QTimerEvent* aEvent );
 signals:
     void pausePressed();

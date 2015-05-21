@@ -9,45 +9,45 @@
 
 const QColor Pad::Color = Qt::darkGreen;
 
-void Pad::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    qreal x = event->scenePos().x();
-    QRectF sceneRect = scene()->sceneRect();
-    if( x >= sceneRect.left() && x <= sceneRect.right() )
-        m_mouseX = event->scenePos().x();   // Let's not move the paddle too often
-}
+//void Pad::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+//{
+//    qreal x = event->scenePos().x();
+//    QRectF sceneRect = scene()->sceneRect();
+//    if( x >= sceneRect.left() && x <= sceneRect.right() )
+//        m_mouseX = event->scenePos().x();   // Let's not move the paddle too often
+//}
 
-void Pad::keyPressEvent(QKeyEvent *event)
-{
-    switch( event->key())
-    {
-     case Qt::Key_Left:
-        startKeyMove( -1 );
-        break;
-     case Qt::Key_Right:
-        startKeyMove( 1 );
-        break;
-     case Qt::Key_Space:
-        emit pausePressed();
-        break;
-     default:
-        event->ignore();
-     }
-}
+//void Pad::keyPressEvent(QKeyEvent *event)
+//{
+//    switch( event->key())
+//    {
+//     case Qt::Key_Left:
+//        startKeyMove( -1 );
+//        break;
+//     case Qt::Key_Right:
+//        startKeyMove( 1 );
+//        break;
+//     case Qt::Key_Space:
+//        emit pausePressed();
+//        break;
+//     default:
+//        event->ignore();
+//     }
+//}
 
-void Pad::keyReleaseEvent(QKeyEvent *event)
-{
-    switch( event->key())
-    {
-     case Qt::Key_Left:
-     case Qt::Key_Right:
-        stopKeyMove();
-        break;
-     default:
-        event->ignore();
-     }
+//void Pad::keyReleaseEvent(QKeyEvent *event)
+//{
+//    switch( event->key())
+//    {
+//     case Qt::Key_Left:
+//     case Qt::Key_Right:
+//        stopKeyMove();
+//        break;
+//     default:
+//        event->ignore();
+//     }
 
-}
+//}
 
 void Pad::timerEvent(QTimerEvent *aEvent)
 {

@@ -9,8 +9,10 @@
 #include <QtDebug>
 #include <QPainter>
 #include <QGraphicsView>
+#include <QKeyEvent>
+#include <QGraphicsSceneMouseEvent>
 
-GameScene::GameScene(): m_paused(true), m_tries(3), m_score(0) //не играем сразу, три попытки, 0 очков
+GameScene::GameScene(): m_paused(true), m_tries(3), m_score(0), m_started(false) //не играем сразу, три попытки, 0 очков
 {
     setSceneRect( -Width/2, -Height/2, Width, Height );
     const qreal borderWidth = 10;
@@ -100,7 +102,7 @@ void GameScene::setup()
     setupBall();
     setupBricks();
     setupPad();
-    setupHearts(3);
+    setupHearts( m_tries );
     m_timer = startTimer( GameTick );
 }
 
@@ -108,6 +110,7 @@ void GameScene::moveBall() //двигаем мячик
 {
     mBall->updatePos( GameTick );
     if (m_tries != mBall->getTries()){ //только если изменилось кол-во попыток
+        m_started = false;
         m_tries = mBall->getTries();
         QString tries = QString::number(m_tries);
         label->setText(tries);
@@ -157,6 +160,56 @@ void GameScene::moveBall() //двигаем мячик
 void GameScene::timerEvent(QTimerEvent */*event*/) //по событию таймера (само событие нас не интересует)
 {
     moveBall();
+}
+
+void GameScene::keyPressEvent(QKeyEvent *event)
+{
+    switch( event->key())
+    {
+     case Qt::Key_Left:
+        mPad->startKeyMove( -1 );
+        if (!m_started){
+            mBall->setX(mPad->x());
+        }
+        break;
+     case Qt::Key_Right:
+        mPad->startKeyMove( 1 );
+        if (!m_started){
+            mBall->setX(mPad->x());
+        }
+        break;
+     case Qt::Key_Space:
+        m_started = true;
+        emit mPad->pausePressed();
+        break;
+     default:
+        event->ignore();
+     }
+
+}
+
+void GameScene::keyReleaseEvent(QKeyEvent *event)
+{
+    switch( event->key())
+    {
+     case Qt::Key_Left:
+     case Qt::Key_Right:
+        mPad->stopKeyMove();
+        break;
+     default:
+        event->ignore();
+    }
+}
+
+void GameScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    qreal x = event->scenePos().x();
+    QRectF sceneRect = this->sceneRect();
+    if( x >= sceneRect.left() && x <= sceneRect.right() )
+        mPad->setX( event->scenePos().x() );   // против выхода за пределы
+    if (!m_started){
+        mBall->setX(mPad->x());
+    }
 }
 void GameScene::togglePause() //игра на паузе
 {

@@ -24,6 +24,7 @@ class GameScene : public QGraphicsScene
     int m_score; //счетчик очков
     int m_tries; // счетчик попыток
     bool m_paused;//игра на паузе
+    bool m_started; // игра стратовала или нет
     ball* mBall; // переменная типа мяч
     Pad* mPad; //переменная типа доска
     QList<Brick*> m_bricks;
@@ -34,6 +35,9 @@ private slots:
     void togglePause(); //событие нажатия на пробел - пауза в игре
 protected:
     void timerEvent(QTimerEvent* event); //таймер для событий
+    void keyPressEvent(QKeyEvent* event );
+    void keyReleaseEvent(QKeyEvent* event );
+    void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
 public:
     // перечислимый тип для получения информации обо что ударился мяч
     enum
